@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Sistema QMania Restaurante - Versão HTML
 
 ## 📋 Descrição
@@ -213,3 +214,7 @@ Este projeto é propriedade do QMania Restaurante. Todos os direitos reservados.
 **Desenvolvido com ❤️ para o QMania Restaurante**
 
 *Sistema de gerenciamento completo para restaurantes modernos*
+=======
+# Q_ManiaREST
+PI Senac Restaurante
+>>>>>>> 32055ea84a576d6d2558c740efd5619fed4e395a
