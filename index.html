@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="img/icone2.ico" type="image/x-icon">
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">    
+    <title>Login - QMania Restaurante</title>
+
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <link href="vendor/css/login.css" rel="stylesheet">
+
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+</head>
+<body>
+    <div id="login">
+        <div class="container">
+            <div id="login-row" class="row justify-content-center align-items-center">
+                <div id="login-column" class="col-md-6">
+                    <div id="login-box" class="col-md-12">
+                        <form id="login-form" class="form" action="javascript:void(0);" method="post">
+                            <h3 class="text-center text-info"><img src="img/logo-icone.png" width="50px"></h3>
+                            <div class="form-group">
+                                <label for="username" class="">Usuário:</label><br>
+                                <input type="text" name="usuario" id="usuario" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="senha" class="">Senha:</label><br>
+                                <input type="password" name="senha" id="senha" class="form-control" required>
+                            </div>
+                            <div class="form-group mt-4">
+                                <input type="submit" name="submit" class="btn btn-light btn-md" value="Logar" onclick="fazerLogin()">
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function fazerLogin() {
+            const usuario = document.getElementById('usuario').value;
+            const senha = document.getElementById('senha').value;
+            
+            // Simulação de login com dados de exemplo
+            const usuarios = {
+                'admin@admin.com': { senha: '123', nivel: 'Administrador', nome: 'Administrador' },
+                'chef@chef.com': { senha: '123', nivel: 'Chef', nome: 'Chef João' },
+                'recep@recep.com': { senha: '123', nivel: 'Recepcionista', nome: 'Maria Recepcionista' },
+                'garcon@garcon.com': { senha: '123', nivel: 'Garçon', nome: 'Pedro Garçon' },
+                'tela@tela.com': { senha: '123', nivel: 'Tela', nome: 'Tela' }
+            };
+            
+            if (usuarios[usuario] && usuarios[usuario].senha === senha) {
+                // Salvar dados do usuário no localStorage
+                localStorage.setItem('usuarioLogado', JSON.stringify({
+                    nome: usuarios[usuario].nome,
+                    email: usuario,
+                    nivel: usuarios[usuario].nivel
+                }));
+                
+                // Redirecionar conforme o nível
+                switch(usuarios[usuario].nivel) {
+                    case 'Administrador':
+                        window.location.href = 'painel-admin/index.html';
+                        break;
+                    case 'Chef':
+                        window.location.href = 'painel-chef/index.html';
+                        break;
+                    case 'Recepcionista':
+                        window.location.href = 'painel-recep/index.html';
+                        break;
+                    case 'Garçon':
+                        window.location.href = 'painel-garcon/index.html';
+                        break;
+                    case 'Tela':
+                        window.location.href = 'painel-tela/index.html';
+                        break;
+                }
+            } else {
+                alert('Dados Incorretos!');
+            }
+        }
+    </script>
+</body>
+</html>

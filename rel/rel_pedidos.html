@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatório de Pedidos - QMania</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        @media print {
+            .no-print { display: none !important; }
+            body { font-size: 12px; }
+            .table { font-size: 10px; }
+        }
+        .header-relatorio {
+            border-bottom: 2px solid #333;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row no-print">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2>Relatório de Pedidos</h2>
+                    <div>
+                        <button class="btn btn-primary" onclick="window.print()">
+                            <i class="bi bi-printer"></i> Imprimir
+                        </button>
+                        <a href="../painel-recep/index.html" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left"></i> Voltar
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="header-relatorio">
+            <div class="row">
+                <div class="col-6">
+                    <h3>QMania Restaurante</h3>
+                    <p>Relatório de Pedidos</p>
+                </div>
+                <div class="col-6 text-end">
+                    <p><strong>Data:</strong> <span id="data-atual"></span></p>
+                    <p><strong>Período:</strong> <span id="periodo"></span></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <table class="table table-striped table-bordered">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>Mesa</th>
+                            <th>Cliente</th>
+                            <th>Pedido</th>
+                            <th>Status</th>
+                            <th>Valor</th>
+                            <th>Data/Hora</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabela-pedidos">
+                        <!-- Dados serão carregados via JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Resumo do Relatório</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="text-center">
+                                    <h4 class="text-primary" id="total-pedidos">0</h4>
+                                    <p>Total de Pedidos</p>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="text-center">
+                                    <h4 class="text-success" id="pedidos-concluidos">0</h4>
+                                    <p>Pedidos Concluídos</p>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="text-center">
+                                    <h4 class="text-warning" id="pedidos-andamento">0</h4>
+                                    <p>Em Andamento</p>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="text-center">
+                                    <h4 class="text-info" id="valor-total">R$ 0,00</h4>
+                                    <p>Valor Total</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dados de exemplo dos pedidos
+        const pedidos = [
+            { id: 1, mesa: 5, cliente: "João Silva", pedido: "Pizza Margherita + Refrigerante", status: "Concluído", valor: 45.00, data: "2024-01-15 14:30" },
+            { id: 2, mesa: 12, cliente: "Maria Santos", pedido: "Lasanha + Suco", status: "Concluído", valor: 38.00, data: "2024-01-15 14:25" },
+            { id: 3, mesa: 8, cliente: "Carlos Oliveira", pedido: "Hambúrguer + Batata Frita", status: "Preparando", valor: 52.00, data: "2024-01-15 14:35" },
+            { id: 4, mesa: 3, cliente: "Ana Costa", pedido: "Salada Caesar + Água", status: "Concluído", valor: 21.00, data: "2024-01-15 14:40" },
+            { id: 5, mesa: 15, cliente: "Pedro Lima", pedido: "Pizza Portuguesa + Cerveja", status: "Aguardando", valor: 58.00, data: "2024-01-15 14:45" },
+            { id: 6, mesa: 7, cliente: "Lucia Ferreira", pedido: "Risotto + Vinho", status: "Concluído", valor: 65.00, data: "2024-01-15 14:20" },
+            { id: 7, mesa: 22, cliente: "Roberto Alves", pedido: "Picanha + Batata", status: "Preparando", valor: 78.00, data: "2024-01-15 14:50" },
+            { id: 8, mesa: 9, cliente: "Fernanda Souza", pedido: "Sushi + Sake", status: "Concluído", valor: 85.00, data: "2024-01-15 14:15" }
+        ];
+
+        function carregarRelatorio() {
+            const tbody = document.getElementById('tabela-pedidos');
+            tbody.innerHTML = '';
+
+            let totalPedidos = 0;
+            let pedidosConcluidos = 0;
+            let pedidosAndamento = 0;
+            let valorTotal = 0;
+
+            pedidos.forEach(pedido => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${pedido.id}</td>
+                    <td>Mesa ${pedido.mesa}</td>
+                    <td>${pedido.cliente}</td>
+                    <td>${pedido.pedido}</td>
+                    <td>
+                        <span class="badge ${getStatusClass(pedido.status)}">
+                            ${pedido.status}
+                        </span>
+                    </td>
+                    <td>R$ ${pedido.valor.toFixed(2)}</td>
+                    <td>${pedido.data}</td>
+                `;
+                tbody.appendChild(row);
+
+                totalPedidos++;
+                if (pedido.status === 'Concluído') pedidosConcluidos++;
+                if (pedido.status === 'Preparando' || pedido.status === 'Aguardando') pedidosAndamento++;
+                valorTotal += pedido.valor;
+            });
+
+            // Atualizar resumo
+            document.getElementById('total-pedidos').textContent = totalPedidos;
+            document.getElementById('pedidos-concluidos').textContent = pedidosConcluidos;
+            document.getElementById('pedidos-andamento').textContent = pedidosAndamento;
+            document.getElementById('valor-total').textContent = `R$ ${valorTotal.toFixed(2)}`;
+
+            // Atualizar data e período
+            document.getElementById('data-atual').textContent = new Date().toLocaleDateString('pt-BR');
+            document.getElementById('periodo').textContent = '15/01/2024';
+        }
+
+        function getStatusClass(status) {
+            switch(status) {
+                case 'Concluído': return 'bg-success';
+                case 'Preparando': return 'bg-warning';
+                case 'Aguardando': return 'bg-danger';
+                default: return 'bg-secondary';
+            }
+        }
+
+        // Carregar relatório ao inicializar
+        document.addEventListener('DOMContentLoaded', carregarRelatorio);
+    </script>
+</body>
+</html>

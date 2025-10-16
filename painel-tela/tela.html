@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tela de Pedidos - QMania</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+
+    <link rel="shortcut icon" href="../img/icone2.ico" type="image/x-icon">
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">   
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.0/font/bootstrap-icons.css">
+
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        .pedido-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin: 20px;
+            padding: 25px;
+            transition: transform 0.3s ease;
+            animation: slideIn 0.5s ease-out;
+        }
+        
+        .pedido-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        .status-badge {
+            font-size: 1.1em;
+            padding: 8px 15px;
+            border-radius: 20px;
+        }
+        
+        .mesa-info {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            display: inline-block;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        
+        .pedido-item {
+            background: #f8f9fa;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 8px;
+            border-left: 4px solid #007bff;
+        }
+        
+        .valor-total {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #28a745;
+            text-align: right;
+            margin-top: 15px;
+        }
+        
+        .tempo-info {
+            color: #6c757d;
+            font-size: 0.9em;
+        }
+        
+        .header-tela {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header-tela">
+        <h1><i class="bi bi-tv"></i> Tela de Pedidos - QMania Restaurante</h1>
+        <p>Pedidos em tempo real</p>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row" id="pedidos-container">
+            <!-- Pedidos serão carregados dinamicamente -->
+        </div>
+    </div>
+
+    <script>
+        // Dados de exemplo dos pedidos
+        const pedidos = [
+            {
+                id: 1,
+                mesa: 5,
+                cliente: "João Silva",
+                itens: [
+                    { nome: "Pizza Margherita", quantidade: 1, preco: 35.00 },
+                    { nome: "Refrigerante Lata", quantidade: 2, preco: 5.00 }
+                ],
+                status: "preparando",
+                tempo: "15 min",
+                total: 45.00,
+                hora: "14:30"
+            },
+            {
+                id: 2,
+                mesa: 12,
+                cliente: "Maria Santos",
+                itens: [
+                    { nome: "Lasanha à Bolonhesa", quantidade: 1, preco: 28.00 },
+                    { nome: "Suco de Laranja", quantidade: 1, preco: 8.00 }
+                ],
+                status: "pronto",
+                tempo: "5 min",
+                total: 36.00,
+                hora: "14:25"
+            },
+            {
+                id: 3,
+                mesa: 8,
+                cliente: "Carlos Oliveira",
+                itens: [
+                    { nome: "Hambúrguer Artesanal", quantidade: 1, preco: 32.00 },
+                    { nome: "Batata Frita", quantidade: 1, preco: 12.00 },
+                    { nome: "Cerveja", quantidade: 1, preco: 8.00 }
+                ],
+                status: "aguardando",
+                tempo: "20 min",
+                total: 52.00,
+                hora: "14:35"
+            },
+            {
+                id: 4,
+                mesa: 3,
+                cliente: "Ana Costa",
+                itens: [
+                    { nome: "Salada Caesar", quantidade: 1, preco: 18.00 },
+                    { nome: "Água", quantidade: 1, preco: 3.00 }
+                ],
+                status: "preparando",
+                tempo: "10 min",
+                total: 21.00,
+                hora: "14:40"
+            }
+        ];
+
+        function getStatusClass(status) {
+            switch(status) {
+                case 'aguardando': return 'bg-danger';
+                case 'preparando': return 'bg-warning';
+                case 'pronto': return 'bg-success';
+                default: return 'bg-secondary';
+            }
+        }
+
+        function getStatusText(status) {
+            switch(status) {
+                case 'aguardando': return 'Aguardando';
+                case 'preparando': return 'Preparando';
+                case 'pronto': return 'Pronto';
+                default: return 'Desconhecido';
+            }
+        }
+
+        function renderizarPedidos() {
+            const container = document.getElementById('pedidos-container');
+            container.innerHTML = '';
+
+            pedidos.forEach(pedido => {
+                const pedidoCard = document.createElement('div');
+                pedidoCard.className = 'col-lg-4 col-md-6';
+                pedidoCard.innerHTML = `
+                    <div class="pedido-card">
+                        <div class="mesa-info">
+                            <i class="bi bi-table"></i> Mesa ${pedido.mesa}
+                        </div>
+                        
+                        <h5><i class="bi bi-person"></i> ${pedido.cliente}</h5>
+                        
+                        <div class="tempo-info">
+                            <i class="bi bi-clock"></i> ${pedido.tempo} | <i class="bi bi-calendar"></i> ${pedido.hora}
+                        </div>
+                        
+                        <hr>
+                        
+                        <h6><i class="bi bi-list-ul"></i> Pedido:</h6>
+                        ${pedido.itens.map(item => `
+                            <div class="pedido-item">
+                                <strong>${item.quantidade}x</strong> ${item.nome}
+                                <span class="float-end">R$ ${item.preco.toFixed(2)}</span>
+                            </div>
+                        `).join('')}
+                        
+                        <div class="valor-total">
+                            Total: R$ ${pedido.total.toFixed(2)}
+                        </div>
+                        
+                        <div class="text-center mt-3">
+                            <span class="badge status-badge ${getStatusClass(pedido.status)}">
+                                ${getStatusText(pedido.status)}
+                            </span>
+                        </div>
+                    </div>
+                `;
+                
+                container.appendChild(pedidoCard);
+            });
+        }
+
+        // Renderizar pedidos inicialmente
+        renderizarPedidos();
+
+        // Atualizar a cada 30 segundos (simulação)
+        setInterval(() => {
+            // Simular mudança de status
+            const pedidoAleatorio = Math.floor(Math.random() * pedidos.length);
+            const statuses = ['aguardando', 'preparando', 'pronto'];
+            const statusAtual = pedidos[pedidoAleatorio].status;
+            const novoStatus = statuses[Math.floor(Math.random() * statuses.length)];
+            
+            if (novoStatus !== statusAtual) {
+                pedidos[pedidoAleatorio].status = novoStatus;
+                renderizarPedidos();
+            }
+        }, 30000);
+    </script>
+</body>
+</html>

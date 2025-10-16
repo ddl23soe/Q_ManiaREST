@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tela de Chamada - QMania</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+
+    <link rel="shortcut icon" href="../img/icone2.ico" type="image/x-icon">
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">   
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.0/font/bootstrap-icons.css">
+
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        .chamada-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            margin: 20px;
+            padding: 30px;
+            transition: all 0.3s ease;
+            animation: pulse 2s infinite;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .chamada-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shine 3s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        @keyframes shine {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        
+        .mesa-numero {
+            font-size: 4em;
+            font-weight: bold;
+            color: #ff6b6b;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            margin-bottom: 20px;
+        }
+        
+        .chamada-texto {
+            font-size: 2em;
+            color: #333;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        
+        .tempo-chamada {
+            font-size: 1.2em;
+            color: #666;
+            background: #f8f9fa;
+            padding: 10px 20px;
+            border-radius: 25px;
+            display: inline-block;
+        }
+        
+        .header-tela {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .status-indicator {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 20px;
+            height: 20px;
+            background: #28a745;
+            border-radius: 50%;
+            animation: blink 1s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0.3; }
+        }
+        
+        .chamada-info {
+            background: rgba(255,255,255,0.9);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="header-tela">
+        <h1><i class="bi bi-bell-fill"></i> Tela de Chamada - QMania Restaurante</h1>
+        <p>Chamadas em tempo real</p>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row justify-content-center">
+            <div class="col-lg-6 col-md-8">
+                <div class="chamada-card" id="chamada-card">
+                    <div class="status-indicator"></div>
+                    <div class="mesa-numero" id="mesa-numero">MESA 12</div>
+                    <div class="chamada-texto">ATENDIMENTO SOLICITADO</div>
+                    <div class="tempo-chamada">
+                        <i class="bi bi-clock"></i> <span id="tempo-chamada">2 min</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="chamada-info">
+            <h4><i class="bi bi-info-circle"></i> Informações da Chamada</h4>
+            <p><strong>Cliente:</strong> <span id="cliente-nome">Maria Santos</span></p>
+            <p><strong>Pedido:</strong> <span id="pedido-info">Lasanha à Bolonhesa + Suco de Laranja</span></p>
+            <p><strong>Valor:</strong> <span id="valor-pedido">R$ 36,00</span></p>
+            <p><strong>Status:</strong> <span class="badge bg-success">Pronto para Entrega</span></p>
+        </div>
+    </div>
+
+    <script>
+        // Dados de exemplo das chamadas
+        const chamadas = [
+            {
+                mesa: 12,
+                cliente: "Maria Santos",
+                pedido: "Lasanha à Bolonhesa + Suco de Laranja",
+                valor: 36.00,
+                status: "Pronto para Entrega",
+                tempo: "2 min"
+            },
+            {
+                mesa: 5,
+                cliente: "João Silva",
+                pedido: "Pizza Margherita + Refrigerante",
+                valor: 45.00,
+                status: "Aguardando Atendimento",
+                tempo: "5 min"
+            },
+            {
+                mesa: 8,
+                cliente: "Carlos Oliveira",
+                pedido: "Hambúrguer Artesanal + Batata Frita",
+                valor: 52.00,
+                status: "Preparando",
+                tempo: "8 min"
+            }
+        ];
+
+        let chamadaAtual = 0;
+        let tempoDecorrido = 0;
+
+        function atualizarChamada() {
+            const chamada = chamadas[chamadaAtual];
+            
+            document.getElementById('mesa-numero').textContent = `MESA ${chamada.mesa}`;
+            document.getElementById('cliente-nome').textContent = chamada.cliente;
+            document.getElementById('pedido-info').textContent = chamada.pedido;
+            document.getElementById('valor-pedido').textContent = `R$ ${chamada.valor.toFixed(2)}`;
+            document.getElementById('tempo-chamada').textContent = chamada.tempo;
+            
+            // Atualizar status badge
+            const statusBadge = document.querySelector('.badge');
+            statusBadge.textContent = chamada.status;
+            statusBadge.className = 'badge ' + getStatusClass(chamada.status);
+        }
+
+        function getStatusClass(status) {
+            switch(status) {
+                case 'Pronto para Entrega': return 'bg-success';
+                case 'Aguardando Atendimento': return 'bg-warning';
+                case 'Preparando': return 'bg-info';
+                default: return 'bg-secondary';
+            }
+        }
+
+        function proximaChamada() {
+            chamadaAtual = (chamadaAtual + 1) % chamadas.length;
+            atualizarChamada();
+            tempoDecorrido = 0;
+        }
+
+        function atualizarTempo() {
+            tempoDecorrido++;
+            const minutos = Math.floor(tempoDecorrido / 60);
+            const segundos = tempoDecorrido % 60;
+            document.getElementById('tempo-chamada').textContent = 
+                `${minutos}:${segundos.toString().padStart(2, '0')}`;
+        }
+
+        // Inicializar
+        atualizarChamada();
+
+        // Atualizar tempo a cada segundo
+        setInterval(atualizarTempo, 1000);
+
+        // Trocar chamada a cada 10 segundos
+        setInterval(proximaChamada, 10000);
+
+        // Efeito sonoro simulado (comentado para não incomodar)
+        /*
+        function tocarSino() {
+            const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWT');
+            audio.play();
+        }
+        
+        setInterval(tocarSino, 10000);
+        */
+    </script>
+</body>
+</html>

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatório de Produtos - QMania</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        @media print {
+            .no-print { display: none !important; }
+            body { font-size: 12px; }
+            .table { font-size: 10px; }
+        }
+        .header-relatorio {
+            border-bottom: 2px solid #333;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row no-print">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2>Relatório de Produtos</h2>
+                    <div>
+                        <button class="btn btn-primary" onclick="window.print()">
+                            <i class="bi bi-printer"></i> Imprimir
+                        </button>
+                        <a href="../painel-admin/index.html" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left"></i> Voltar
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="header-relatorio">
+            <div class="row">
+                <div class="col-6">
+                    <h3>QMania Restaurante</h3>
+                    <p>Relatório de Produtos</p>
+                </div>
+                <div class="col-6 text-end">
+                    <p><strong>Data:</strong> <span id="data-atual"></span></p>
+                    <p><strong>Gerado por:</strong> Sistema QMania</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <table class="table table-striped table-bordered">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>Nome</th>
+                            <th>Categoria</th>
+                            <th>Preço</th>
+                            <th>Estoque</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabela-produtos">
+                        <!-- Dados serão carregados via JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Resumo do Relatório</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="text-center">
+                                    <h4 class="text-primary" id="total-produtos">0</h4>
+                                    <p>Total de Produtos</p>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="text-center">
+                                    <h4 class="text-success" id="produtos-ativo">0</h4>
+                                    <p>Produtos Ativos</p>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="text-center">
+                                    <h4 class="text-warning" id="estoque-baixo">0</h4>
+                                    <p>Estoque Baixo</p>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="text-center">
+                                    <h4 class="text-info" id="valor-total">R$ 0,00</h4>
+                                    <p>Valor Total</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dados de exemplo dos produtos
+        const produtos = [
+            { id: 1, nome: "Tomate", categoria: "Vegetais", preco: 5.50, estoque: 25, status: "Ativo" },
+            { id: 2, nome: "Cebola", categoria: "Vegetais", preco: 3.20, estoque: 15, status: "Ativo" },
+            { id: 3, nome: "Alho", categoria: "Temperos", preco: 8.90, estoque: 5, status: "Ativo" },
+            { id: 4, nome: "Azeite", categoria: "Temperos", preco: 12.50, estoque: 8, status: "Ativo" },
+            { id: 5, nome: "Sal", categoria: "Temperos", preco: 2.10, estoque: 2, status: "Estoque Baixo" },
+            { id: 6, nome: "Pimenta", categoria: "Temperos", preco: 4.80, estoque: 1, status: "Estoque Baixo" },
+            { id: 7, nome: "Queijo Mussarela", categoria: "Laticínios", preco: 18.90, estoque: 12, status: "Ativo" },
+            { id: 8, nome: "Presunto", categoria: "Frios", preco: 22.50, estoque: 6, status: "Ativo" },
+            { id: 9, nome: "Massa", categoria: "Massas", preco: 6.80, estoque: 20, status: "Ativo" },
+            { id: 10, nome: "Molho de Tomate", categoria: "Molhos", preco: 4.50, estoque: 3, status: "Estoque Baixo" }
+        ];
+
+        function carregarRelatorio() {
+            const tbody = document.getElementById('tabela-produtos');
+            tbody.innerHTML = '';
+
+            let totalProdutos = 0;
+            let produtosAtivo = 0;
+            let estoqueBaixo = 0;
+            let valorTotal = 0;
+
+            produtos.forEach(produto => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${produto.id}</td>
+                    <td>${produto.nome}</td>
+                    <td>${produto.categoria}</td>
+                    <td>R$ ${produto.preco.toFixed(2)}</td>
+                    <td>${produto.estoque}</td>
+                    <td>
+                        <span class="badge ${produto.status === 'Ativo' ? 'bg-success' : 'bg-warning'}">
+                            ${produto.status}
+                        </span>
+                    </td>
+                `;
+                tbody.appendChild(row);
+
+                totalProdutos++;
+                if (produto.status === 'Ativo') produtosAtivo++;
+                if (produto.status === 'Estoque Baixo') estoqueBaixo++;
+                valorTotal += produto.preco * produto.estoque;
+            });
+
+            // Atualizar resumo
+            document.getElementById('total-produtos').textContent = totalProdutos;
+            document.getElementById('produtos-ativo').textContent = produtosAtivo;
+            document.getElementById('estoque-baixo').textContent = estoqueBaixo;
+            document.getElementById('valor-total').textContent = `R$ ${valorTotal.toFixed(2)}`;
+
+            // Atualizar data
+            document.getElementById('data-atual').textContent = new Date().toLocaleDateString('pt-BR');
+        }
+
+        // Carregar relatório ao inicializar
+        document.addEventListener('DOMContentLoaded', carregarRelatorio);
+    </script>
+</body>
+</html>
